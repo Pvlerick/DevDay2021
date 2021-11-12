@@ -11,15 +11,13 @@
 	<link rel="stylesheet" href="reveal.js/dist/reset.css">
 	<link rel="stylesheet" href="reveal.js/dist/reveal.css">
 	<link rel="stylesheet" href="reveal.js/dist/theme/black.css" id="theme">
-
-	<!-- Theme used for syntax highlighting of code -->
 	<link rel="stylesheet" href="reveal.js/plugin/highlight/monokai.css">
 </head>
 
 <body>
 	<div class="reveal">
 		<div class="slides">
-			<section data-background-image="img/sponsors.png"></section>
+			<section data-background-image="img/sponsors.png">[INSERT SPONSORS HERE]</section>
 			<section data-markdown>
 				<textarea data-template>
 					## Dissection de async/await
@@ -32,54 +30,76 @@
 			<section>
 				<section data-markdown>
 					<textarea data-template>
-						## Historique
+						## Introduction
+
+						Note:
+						Qui utilise asyc/await quotidiennement?
+						Qui a déjà écit du code asynchrone sans async/await?
 					</textarea>
 				</section>
 				<section data-markdown>
 					<textarea data-template>
-						![Design Patterns: Elements of Reusable Object-Oriented Software](img/GOF.png)
-						
-						#### GOF: Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides
-						#### 1994
+						### Le code asynchrone c'est...
+						- difficile à écrire <!-- .element: class="fragment" -->
+						- difficile à lire <!-- .element: class="fragment" -->
+						- souvent incorrect <!-- .element: class="fragment" -->
+						- ne parlons même pas des exceptions <!-- .element: class="fragment" -->
+						- ...bref, pénible :-) <!-- .element: class="fragment" -->
 					</textarea>
 				</section>
 				<section data-markdown>
 					<textarea data-template>
-						_Plus simples qu'ils en ont l'air..._
+						### <code>async/await</code>
+						- tente de palier à ces problèmes <!-- .element: class="fragment" -->
+						- permet d'écrire du code plus expressif <!-- .element: class="fragment" -->
+
+						Note:
+						Async/await tente d'apporter une solution afin de permettre l'écriture de code exprimant une intention claire
 					</textarea>
 				</section>
 			</section>
 			<section>
 				<section data-markdown>
 					<textarea data-template>
-						## Mise en place
+						## Démo - Mise en place
+					</textarea data-template>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Observations
+						- <!-- .element: class="fragment" --> Pas de <code>callback</code> ou d'<code>event</code> 
+						- <!-- .element: class="fragment" --> Structure de code familière 
+						- <!-- .element: class="fragment" --> Suspend l'execution du code en attendant la fin d'une opération
+						  - <!-- .element: class="fragment" --> Sans bloquer le <code>thread</code> ?!
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Points d'attention
+						- <!-- .element: class="fragment" --> <code>GetStringAsync</code> renvoie une <code>Task</code>&lt;<code>string</code>&gt;
+						- <!-- .element: class="fragment" --> <code>Call Stack</code> après le premier <code>await</code>
+					</textarea data-template>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### <code>Task</code>
+						<pre>
+							<code data-trim data-noescape>
+								// je fais un appel asychrone
+								Task<string> t = client.GetStringAsync($"http://localhost:8080");
+								// je peux faire autre chose ici
+								...
+								// je ne peux pas aller plus loin sans le résultat
+								string quote = await t;
+							</code>
+						</pre>
 					</textarea data-template>
 				</section>
 			</section>
 			<section>
 				<section data-markdown>
 					<textarea data-template>
-						## _Decorator_
-					</textarea data-template>
-				</section>
-				<section data-markdown>
-					<textarea data-template>
-						### Pourquoi
-						- Ajout de comportement sans modification de l'existant <!-- .element: class="fragment" -->
-						- Séparation des responsabilités <!-- .element: class="fragment" -->
-						- Modification du comportement lors de l'exécution <!-- .element: class="fragment" -->
-					</textarea data-template>
-				</section>
-				<section data-markdown>
-					<textarea data-template>
-						### Demo
-					</textarea data-template>
-				</section>
-				<section data-markdown>
-					<textarea data-template>
-						### Comment
-						- Implémente l'interface de l'objet décoré <!-- .element: class="fragment" -->
-						- Ajoute un comportement avant et/ou après l'appel à l'objet décoré <!-- .element: class="fragment" -->
+						## BlaBla
 					</textarea data-template>
 				</section>
 				<section data-markdown>
@@ -110,226 +130,10 @@
 			<section>
 				<section data-markdown>
 					<textarea data-template>
-						## _Adapter_
-					</textarea data-template>
-				</section>
-				<section data-markdown>
-					<textarea data-template>
-						### Pourquoi
-						- Transforme une interfaces en une autre <!-- .element: class="fragment" -->
-					</textarea data-template>
-				</section>
-				<section data-markdown>
-					<textarea data-template>
-						### Demo
-					</textarea data-template>
-				</section>
-				<section data-markdown>
-					<textarea data-template>
-						### Comment
-						- Objet qui implémente l'interface attendue <!-- .element: class="fragment" -->
-						- Relaye les appels vers l'interface tierce <!-- .element: class="fragment" -->
-					</textarea data-template>
-				</section>
-				<section data-markdown>
-					<textarea data-template>
-						### Notes
-						- Très courant
-						- &#8800; Mapper
-					</textarea data-template>
-				</section>
-				<section data-markdown>
-					<textarea data-template>
-						### Exemple
-						[Serilog/NLogSink](https://github.com/serilog/serilog-sinks-nlog/blob/dev/src/Serilog.Sinks.NLog/Sinks/NLog/NLogSink.cs#L11)
-						- Adapte _NLog.Logger_ vers _Serilog.ILogEventSink_ 
-					</textarea>
-				</section>
-			</section>
-			<section>
-				<section data-markdown>
-					<textarea data-template>
-						## _Composite_
-					</textarea data-template>
-				</section>
-				<section data-markdown>
-					<textarea data-template>
-						### Pourquoi
-						- Traiter plusieurs objets similaires comme un seul <!-- .element: class="fragment" -->
-					</textarea data-template>
-				</section>
-				<section data-markdown>
-					<textarea data-template>
-						### Demo
-					</textarea data-template>
-				</section>
-				<section data-markdown>
-					<textarea data-template>
-						### Comment
-						- Objet qui implémente l'interface attendue <!-- .element: class="fragment" -->
-						- Ctor qui reçoit une série d'objet <!-- .element: class="fragment" -->
-						- Relaye les appels vers chaque objet <!-- .element: class="fragment" -->
-					</textarea data-template>
-				</section>
-				<section data-markdown>
-					<textarea data-template>
-						### Exemple
-						[Microsoft.Extensions.Logging/Logger](https://github.com/aspnet/Extensions/blob/master/src/Logging/Logging/src/Logger.cs)
-						- _LoggerFactory_ crée des instances de _Logger_
-						- Dans chaque _Logger_, un tableau de _LoggerInformation_
-						- Dans chaque _LoggerInformation_, un _ILogger_
-						- _Logger_._Log_ délègue à chaque _LoggerInformation_._Logger_
-					</textarea>
-				</section>
-			</section>
-			<section>
-				<section data-markdown>
-					<textarea data-template>
-						## _Singleton_
-					</textarea data-template>
-				</section>
-				<section data-markdown>
-					<textarea data-template>
-						### Pourquoi
-						- Une seule instance <!-- .element: class="fragment" -->
-					</textarea data-template>
-				</section>
-				<section data-markdown>
-					<textarea data-template>
-						### Comment (théoriquement)
-						<pre>
-							<code data-trim data-noescape>
-								public final class Singleton {
-
-									private static final Singleton INSTANCE = new Singleton();
-								
-									private Singleton() {}
-								
-									public static Singleton getInstance() {
-										return INSTANCE;
-									}
-								}
-							</code>
-						</pre>
-						<small>https://en.wikipedia.org/wiki/Singleton_pattern</small>
-					</textarea>
-				</section>
-				<section data-markdown>
-					<textarea data-template>
-						### Comment (en vrai)
-						- Injection de dépendance <!-- .element: class="fragment" -->
-						- ou implémenter une interface <!-- .element: class="fragment" -->
-					</textarea data-template>
-				</section>
-				<section data-markdown>
-					<textarea data-template>
-						### Exemple
-						[_NodaTime/SystemClock_](https://github.com/nodatime/nodatime/blob/master/src/NodaTime/SystemClock.cs)
-						<pre>
-							<code data-trim data-noescape>
-								public sealed class SystemClock : IClock
-								{
-									public static SystemClock Instance { get; } = new SystemClock();
-
-									private SystemClock() { }
-									
-									public Instant GetCurrentInstant() =>
-										NodaConstants.BclEpoch.PlusTicks(DateTime.UtcNow.Ticks);
-								}
-							</code>
-						</pre>
-						- Implémente l'interface IClock
-						- Pas d'état
-					</textarea data-template>
-				</section>
-			</section>
-			<section>
-				<section data-markdown>
-					<textarea data-template>
-						## Autres exemples
-					</textarea data-template>
-				</section>
-				<section data-markdown>
-					<textarea data-template>
-						### _Chain-of-responsibility_
-						_Middleware_ de ASP.NET Core
-						<pre>
-							<code data-trim data-noescape>
-								public class Middleware
-								{
-									private readonly RequestDelegate _next;
-								
-									public Middleware(RequestDelegate next) => _next = next;
-								
-									public async Task InvokeAsync(HttpContext context)
-									{
-										// Call the next delegate/middleware in the pipeline
-										await _next(context);
-									}
-								}
-							</code>
-						</pre>
-						<small>https://docs.microsoft.com/en-us/aspnet/core/fundamentals/middleware/write?view=aspnetcore-3.0</small>
-					</textarea data-template>
-				</section>
-				<section data-markdown>
-					<textarea data-template>
-						### _Proxy_
-						_Lazy_ de .NET
-						<pre>
-							<code data-trim data-noescape>
-								public interface IService { void Operation(); }
-
-								public class HeavyService : IService
-								{
-									public HeavyService() { //Very costly... }
-								
-									public void Operation();
-								}
-
-								public class ServiceProxy : IService
-								{
-									private Lazy<HeavyService> service = new Lazy<HeavyService>(() => new HeavyService());
-									
-									public void Operation() => this.service.Operation();
-								}
-							</code>
-						</pre>
-					</textarea data-template>
-				</section>
-				<section data-markdown>
-					<textarea data-template>
-						### _Builder_
-						![Builders ASP.NET Core](img/builders.png)
-					</textarea>
-				</section>
-				<section data-markdown>
-					<textarea data-template>
-						### _Iterator_
-						_IEnumerator_ de .NET
-						<pre>
-							<code data-trim data-noescape>
-								var list = new List<int> { 1, 2, 3 };
-
-								// calls list.GetEnumerator()
-								foreach (var item in list) 
-								{
-									...
-								}
-							</code>
-						</pre>
-					</textarea>
-				</section>
-			</section>
-			<section>
-				<section data-markdown>
-					<textarea data-template>
 						## Conclusions
 					</textarea>
 				</section>
 			</section>
-			<section data-background-image="img/Philippe.jpg"></section>
-			<section data-markdown>
 		</div>
 	</div>
 
