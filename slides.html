@@ -8,10 +8,9 @@
 
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<link rel="stylesheet" href="reveal.js/dist/reset.css">
-	<link rel="stylesheet" href="reveal.js/dist/reveal.css">
-	<link rel="stylesheet" href="reveal.js/dist/theme/black.css" id="theme">
-	<link rel="stylesheet" href="reveal.js/plugin/highlight/monokai.css">
+	<link rel="stylesheet" href="reveal.js/css/reveal.css">
+	<link rel="stylesheet" href="reveal.js/css/theme/night.css">
+	<link rel="stylesheet" href="reveal.js/lib/css/monokai.css">
 </head>
 
 <body>
@@ -77,7 +76,9 @@
 					<textarea data-template>
 						### Points d'attention
 						- <!-- .element: class="fragment" --> <code>GetStringAsync</code> renvoie une <code>Task</code>&lt;<code>string</code>&gt;
+						![Worldline](img/task.png)
 						- <!-- .element: class="fragment" --> <code>Call Stack</code> après le premier <code>await</code>
+						![Worldline](img/callstack.png)
 					</textarea data-template>
 				</section>
 				<section data-markdown>
@@ -99,37 +100,6 @@
 			<section>
 				<section data-markdown>
 					<textarea data-template>
-						## BlaBla
-					</textarea data-template>
-				</section>
-				<section data-markdown>
-					<textarea data-template>
-						### Exemple
-						[NLog/FilteringTargetWrapper](https://github.com/NLog/NLog/blob/master/src/NLog/Targets/Wrappers/FilteringTargetWrapper.cs)
-						<pre>
-							<code data-trim data-noescape>
-								public abstract class WrapperTargetBase : Target
-								{
-									public Target WrappedTarget { get; set; }
-								}
-
-								public class FilteringTargetWrapper : WrapperTargetBase
-								{
-									public FilteringTargetWrapper(Target wrappedTarget,
-										ConditionExpression condition)
-									{
-										WrappedTarget = wrappedTarget;
-										Condition = condition;
-									}
-								}
-							</code>
-						</pre>
-					</textarea data-template>
-				</section>
-			</section>
-			<section>
-				<section data-markdown>
-					<textarea data-template>
 						## Conclusions
 					</textarea>
 				</section>
@@ -137,26 +107,21 @@
 		</div>
 	</div>
 
-	<script src="reveal.js/dist/reveal.js"></script>
-	<script src="reveal.js/plugin/zoom/zoom.js"></script>
-	<script src="reveal.js/plugin/notes/notes.js"></script>
-	<script src="reveal.js/plugin/search/search.js"></script>
-	<script src="reveal.js/plugin/markdown/markdown.js"></script>
-	<script src="reveal.js/plugin/highlight/highlight.js"></script>
+	<script src="reveal.js/lib/js/head.min.js"></script>
+	<script src="reveal.js/js/reveal.js"></script>
+
 	<script>
-
-		// Also available as an ES module, see:
-		// https://revealjs.com/initialization/
+		// More info about config & dependencies:
+		// - https://github.com/hakimel/reveal.js#configuration
+		// - https://github.com/hakimel/reveal.js#dependencies
 		Reveal.initialize({
-			controls: true,
-			progress: true,
-			center: true,
-			hash: true,
-
-			// Learn about plugins: https://revealjs.com/plugins/
-			plugins: [ RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight ]
+			dependencies: [
+				{ src: 'reveal.js/plugin/markdown/marked.js' },
+				{ src: 'reveal.js/plugin/markdown/markdown.js' },
+				{ src: 'reveal.js/plugin/notes/notes.js', async: true },
+				{ src: 'reveal.js/plugin/highlight/highlight.js', async: true, callback: function () { hljs.initHighlightingOnLoad(); } }
+			]
 		});
-
 	</script>
 </body>
 
