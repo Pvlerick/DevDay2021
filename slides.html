@@ -43,57 +43,84 @@
 						- difficile à lire <!-- .element: class="fragment" -->
 						- souvent incorrect <!-- .element: class="fragment" -->
 						- ne parlons même pas des exceptions <!-- .element: class="fragment" -->
-						- ...bref, pénible :-) <!-- .element: class="fragment" -->
+						- ... pénible <!-- .element: class="fragment" -->
 					</textarea>
 				</section>
 				<section data-markdown>
 					<textarea data-template>
-						### <code>async/await</code>
+						### <code>async</code>/<code>await</code>
 						- tente de palier à ces problèmes <!-- .element: class="fragment" -->
-						- permet d'écrire du code plus expressif <!-- .element: class="fragment" -->
+						- permet du code plus familier <!-- .element: class="fragment" -->
+						
 
 						Note:
 						Async/await tente d'apporter une solution afin de permettre l'écriture de code exprimant une intention claire
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Que va-t-on faire?
+						- Écrire un peu de code <!-- .element: class="fragment" -->
+						- Regarder sous le capot <!-- .element: class="fragment" -->
+
+						Note:
+						Bonne question!
 					</textarea>
 				</section>
 			</section>
 			<section>
 				<section data-markdown>
 					<textarea data-template>
-						## Démo - Mise en place
+						## Démo 1
+						#### Mise en place
 					</textarea data-template>
 				</section>
 				<section data-markdown>
 					<textarea data-template>
 						### Observations
-						- <!-- .element: class="fragment" --> Pas de <code>callback</code> ou d'<code>event</code> 
-						- <!-- .element: class="fragment" --> Structure de code familière 
-						- <!-- .element: class="fragment" --> Suspend l'execution du code en attendant la fin d'une opération
-						  - <!-- .element: class="fragment" --> Sans bloquer le <code>thread</code> ?!
+						- <!-- .element: class="fragment" --> pas de <code>callback</code> ou d'<code>event</code> 
+						- <!-- .element: class="fragment" --> structure de code familière 
+						  - <!-- .element: class="fragment" --> ressemble a du code bloquant
+						  
+						Note:
+						Le code ressemble à du code bloquant, le seul gain est dans la performance
 					</textarea>
 				</section>
 				<section data-markdown>
 					<textarea data-template>
 						### Points d'attention
 						- <!-- .element: class="fragment" --> <code>GetStringAsync</code> renvoie une <code>Task</code>&lt;<code>string</code>&gt;
-						![Worldline](img/task.png)
+						![Task](img/task.png)
+						  - <!-- .element: class="fragment" --> une future <code>string</code>
 						- <!-- .element: class="fragment" --> <code>Call Stack</code> après le premier <code>await</code>
-						![Worldline](img/callstack.png)
+						![Call Stack](img/callstack.png)
+						  - <!-- .element: class="fragment" --> il y a bien eu un callback (ou continuation)
 					</textarea data-template>
 				</section>
 				<section data-markdown>
 					<textarea data-template>
-						### <code>Task</code>
-						<pre>
-							<code data-trim data-noescape>
-								// je fais un appel asychrone
-								Task<string> t = client.GetStringAsync($"http://localhost:8080");
-								// je peux faire autre chose ici
-								...
-								// je ne peux pas aller plus loin sans le résultat
-								string quote = await t;
-							</code>
-						</pre>
+						## Démo 2
+						#### Découpe entre appel et <code>await</code>
+					</textarea data-template>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Observations
+						- <!-- .element: class="fragment" --> appel à <code>GetStringAsync</code> découplé de l'attente du résultat
+						- <!-- .element: class="fragment" --> <code>await</code> suspend l'execution du code en attendant la fin d'une opération
+						  - <!-- .element: class="fragment" --> sans bloquer le <code>thread</code>
+						  
+						Note:
+						await est équivalent à dire "j'ai été aussi loin que le pouvais, à présent j'ai besoin du résultat pour continuer" 
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						![Await](img/await.png)
+
+						Note:
+						Si la Task est deja terminée, l'execution sera synchrone
+						Retour à l'appelant != methode execution terminée!
 					</textarea data-template>
 				</section>
 			</section>
