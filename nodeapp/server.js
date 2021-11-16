@@ -6,6 +6,7 @@ require('log-timestamp');
 // Constants
 const PORT = 8080;
 const HOST = '0.0.0.0';
+const DELAY = 1000;
 
 var quotes = Array(
   "Yeah, piece of cake!",
@@ -99,7 +100,7 @@ var quotes = Array(
 const app = express();
 
 app.use(function(_req, _res, next) {
-  setTimeout(next, 200)
+  setTimeout(next, DELAY)
 });
 
 app.get('/', (_req, res) => {
