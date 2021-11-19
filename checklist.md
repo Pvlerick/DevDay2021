@@ -3,7 +3,9 @@
 ## Before
 
 - Connexion Internet
-- Démarrer container nodeapp
+- Démarrer docker
+- Démarrer container "docker restart duke"
+- Démarrer zoomit
 
 ## Desktop 1
 

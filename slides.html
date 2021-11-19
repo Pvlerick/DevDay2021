@@ -38,7 +38,7 @@
 				</section>
 				<section data-markdown>
 					<textarea data-template>
-						### Le code asynchrone c'est...
+						### Le code asynchrone ~~c'est~~ c'était...
 						- difficile à écrire <!-- .element: class="fragment" -->
 						- difficile à lire <!-- .element: class="fragment" -->
 						- souvent incorrect <!-- .element: class="fragment" -->
@@ -51,24 +51,29 @@
 						### <code>async</code>/<code>await</code>
 						- tente de palier à ces problèmes <!-- .element: class="fragment" -->
 						- permet du code plus familier <!-- .element: class="fragment" -->
-						
+						- sont devenus omniprésents <!-- .element: class="fragment" -->
 
 						Note:
 						Async/await tente d'apporter une solution afin de permettre l'écriture de code exprimant une intention claire
+						ASP.NET Core => async partout
+						Tout dévelopeur C# est ammené à écrire await plusieurs fois par jour
 					</textarea>
 				</section>
 				<section data-markdown>
 					<textarea data-template>
 						### Que va-t-on faire?
+						- Voir la théorie <!-- .element: class="fragment" -->
 						- Écrire un peu de code <!-- .element: class="fragment" -->
 						- Regarder sous le capot <!-- .element: class="fragment" -->
-
-						Note:
-						Bonne question!
+						  - le code géneré par le compilateur <!-- .element: class="fragment" -->
 					</textarea>
 				</section>
-			</section>
-			<section>
+				<section data-markdown>
+					<textarea data-template>
+						### Pourquoi?
+						- Meilleur compréhension <!-- .element: class="fragment" -->
+					</textarea>
+				</section>
 				<section data-markdown>
 					<textarea data-template>
 						## Démo 1
@@ -84,16 +89,15 @@
 						  
 						Note:
 						Le code ressemble à du code bloquant, le seul gain est dans la performance
+						Du point de vue du dévelopeur, la méthode est en "pause" jusqu'a l'obtention du résultat
 					</textarea>
 				</section>
 				<section data-markdown>
 					<textarea data-template>
 						### Points d'attention
-						- <!-- .element: class="fragment" --> <code>GetStringAsync</code> renvoie une <code>Task</code>&lt;<code>string</code>&gt;
-						![Task](img/task.png)
-						  - <!-- .element: class="fragment" --> une future <code>string</code>
+						- <!-- .element: class="fragment" --> <code>GetQuote</code> renvoie une <code>Task</code>&lt;<code>string</code>&gt;
+						  - <!-- .element: class="fragment" --> une tâche qui produira une <code>string</code>
 						- <!-- .element: class="fragment" --> <code>Call Stack</code> après le premier <code>await</code>
-						![Call Stack](img/callstack.png)
 						  - <!-- .element: class="fragment" --> il y a bien eu un callback (ou continuation)
 					</textarea data-template>
 				</section>
@@ -106,7 +110,7 @@
 				<section data-markdown>
 					<textarea data-template>
 						### Observations
-						- <!-- .element: class="fragment" --> appel à <code>GetStringAsync</code> découplé de l'attente du résultat
+						- <!-- .element: class="fragment" --> appel à <code>GetQuote</code> découplé de l'attente du résultat
 						- <!-- .element: class="fragment" --> <code>await</code> suspend l'execution du code en attendant la fin d'une opération
 						  - <!-- .element: class="fragment" --> sans bloquer le <code>thread</code>
 						  
@@ -114,20 +118,259 @@
 						await est équivalent à dire "j'ai été aussi loin que le pouvais, à présent j'ai besoin du résultat pour continuer" 
 					</textarea>
 				</section>
+			</section>
+			<section>
 				<section data-markdown>
 					<textarea data-template>
-						![Await](img/await.png)
-
+						## Evaluation de <code>await</code>
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						<img src="img/await.png" width="300">
+	
 						Note:
-						Si la Task est deja terminée, l'execution sera synchrone
+						L'execution sera synchrone tnat qu'il n'y a pas un réel besoin d'attendre
 						Retour à l'appelant != methode execution terminée!
 					</textarea data-template>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Observations
+						- <!-- .element: class="fragment" --> synchrone jusqu'au <em>réel</em> besoin d'attendre
+						- <!-- .element: class="fragment" --> retour à l'appelant &ne; méthode terminée
+					</textarea>
+				</section>
+			</section>
+			<section>
+				<section data-markdown>
+					<textarea data-template>
+						## Le pattern <code>awaitable</code>
+						#### Codification d'une operation asynchrone
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### <code>TAwaitable</code>
+						Pour supporter <code>await</code> sur un type, il faut
+						- <!-- .element: class="fragment" --> une méthode <code>TAwaiter GetAwaiter()</code>
+						  - <!-- .element: class="fragment" --> instance ou extension, peu importe
+					</textarea data-template>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### <code>TAwaiter</code>
+						Le être valable, il doit à son tour
+						- <!-- .element: class="fragment" --> implémenter <code>INotifyCompletion</code>
+						  - <!-- .element: class="fragment" --> <code>void OnCompleted(Action continuation);</code>
+						- <!-- .element: class="fragment" --> avoir une propriété <code>bool IsCompleted</code>
+						- <!-- .element: class="fragment" --> avoir une méthode <code>TResult GetResult()</code>
+						  - <!-- .element: class="fragment" --> <code>TResult</code> est la valeur attendue (ex: <code>string</code>) ou <code>void</code>
+					</textarea data-template>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						<pre>
+							<code data-trim data-noescape>
+								public class Awaitable
+								{
+									public Awaiter GetAwaiter() => new();
+								}
+
+								public class Awaiter : INotifyCompletion
+								{
+									public bool IsCompleted { get; }
+									public void GetResult() { }
+									public void OnCompleted(Action continuation) { }
+								}
+							</code>
+						</pre>
+					</textarea data-template>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						<img src="img/awaitable-awaiter.png" width="300">
+					</textarea data-template>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						## Démo 3
+						#### <code>Awaitable & Awaiter</code>
+					</textarea data-template>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Observations
+						- <!-- .element: class="fragment" --> appel synchrone si <code>Awaiter.IsCompleted</code>
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						## Démo 4
+						#### <code>Awaitable & Awaiter</code>
+					</textarea data-template>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Observations
+						- <!-- .element: class="fragment" --> appel asynchrone si <code>!Awaiter.IsCompleted</code>
+						- <!-- .element: class="fragment" --> tout ce qui est après le <code>await</code> est la continuation
+					</textarea>
+				</section>
+			</section>
+			<section>
+				<section data-markdown>
+					<textarea data-template>
+						## Récapitulatif
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						- <!-- .element: class="fragment" --> une méthode <code>async</code> rencontre un <code>await</code>
+						  - <!-- .element: class="fragment" --> si l'opération est terminée: elle continue de manière synchrone
+						  - <!-- .element: class="fragment" --> si l'opération n'est pas finie:
+						    - <!-- .element: class="fragment" --> tout le code après est passé comme continuation
+							- <!-- .element: class="fragment" --> l'execution retourne à l'appelant
+					</textarea>
+				</section>
+			</section>
+			<section>
+				<section data-markdown>
+					<textarea data-template>
+						## <code>IAsyncStateMachine</code>
+						#### Le coeur de la machinerie
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						<pre>
+							<code data-trim data-noescape>
+								static async Task Main(string[] args)
+								{
+									var client = new HttpClient();
+									var quote = await client.GetStringAsync("http://localhost:8080/");
+									Console.WriteLine(quote);
+								}
+							</code>
+						</pre>
+					</textarea data-template>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						<pre>
+							<code data-trim data-noescape>
+								[AsyncStateMachine(typeof(&lt;&#8203;Main&#8203;&gt;d__0))]
+								[DebuggerStepThrough]
+								private static Task Main(string[] args)
+								{
+									&lt;&#8203;Main&#8203;&gt;d__0 stateMachine = new &lt;&#8203;Main&#8203;&gt;d__0();
+									stateMachine.&lt;&#8203;&#8203;&gt;t__builder = AsyncTaskMethodBuilder.Create();
+									stateMachine.args = args;
+									stateMachine.&lt;&#8203;&#8203;&gt;1__state = -1;
+									stateMachine.&lt;&#8203;&#8203;&gt;t__builder.Start(ref stateMachine);
+									return stateMachine.&lt;&#8203;&#8203;&gt;t__builder.Task;
+								}
+							</code>
+						</pre>
+					</textarea data-template>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						<pre>
+							<code data-trim data-noescape>
+								[CompilerGenerated]
+								private sealed class &lt;&#8203;Main&#8203;&gt;d__0 : IAsyncStateMachine
+								{
+									public int &lt;&gt;1__state;
+									public AsyncTaskMethodBuilder &lt;&gt;t__builder;
+									public string[] args;
+									private HttpClient &lt;&#8203;client&#8203;&gt;5__1;
+									private string &lt;&#8203;quote&#8203;&gt;5__2;
+									private string &lt;&gt;s__3;
+									private TaskAwaiter&lt;&#8203;string&#8203;&gt; &lt;&gt;u__1;
+								
+									private void MoveNext() { ... }
+								
+									[DebuggerHidden]
+									private void SetStateMachine(IAsyncStateMachine stateMachine) { }
+								}
+							</code>
+						</pre>
+					</textarea data-template>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						<pre>
+							<code data-trim data-noescape>
+								public int &lt;&gt;1__state;
+							</code>
+						</pre>
+						- <!-- .element: class="fragment" --> -1 : pas démarré ou en cours
+						- <!-- .element: class="fragment" --> -2 : fini
+						- <!-- .element: class="fragment" --> autre : en attente
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						<pre>
+							<code data-trim data-noescape>
+								public AsyncTaskMethodBuilder &lt;&gt;t__builder;
+							</code>
+						</pre>
+						Ancrage avec les types de l'infrastructure <code>async</code>
+						- <!-- .element: class="fragment" --> propagation de succès ou de l'échec
+						- <!-- .element: class="fragment" --> gestion de l'attente
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						<pre>
+							<code data-trim data-noescape>
+								public string[] args;
+								private HttpClient &lt;&#8203;client&#8203;&gt;5__1;
+								private string &lt;&#8203;quote&#8203;&gt;5__2;
+								private string &lt;&gt;s__3;
+							</code>
+						</pre>
+						- <!-- .element: class="fragment" --> les paramètres de la méthode
+						- <!-- .element: class="fragment" --> des variables pour conserver l'état
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						<pre>
+							<code data-trim data-noescape>
+								private TaskAwaiter&lt;&#8203;string&#8203;&gt; &lt;&gt;u__1;
+							</code>
+						</pre>
+						l'<code>awaiter</code> utilisé dans <code>MoveNext()</code>
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### MoveNext()
+						Ne tient pas sur un slide...
+					</textarea>
 				</section>
 			</section>
 			<section>
 				<section data-markdown>
 					<textarea data-template>
 						## Conclusions
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Ce n'est pas si compliqué!
+						- <!-- .element: class="fragment" --> le code décompilé fait un peu mal aux yeux
+						- <!-- .element: class="fragment" --> mais il n'est pas complètement illisible
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Les grands absents...
+						- <!-- .element: class="fragment" -->gestion des erreurs
+						- <!-- .element: class="fragment" --><code>SynchronizationContext</code>
 					</textarea>
 				</section>
 			</section>
