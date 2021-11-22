@@ -2,22 +2,12 @@
 
 ## Before
 
-- Connexion Internet
 - Démarrer docker
-- Démarrer container "docker restart duke"
+  - docker restart duke
+  - http GET http://localhost:8080
 - Démarrer zoomit
-
-## Desktop 1
-
-- Slides in browser
-
-## Desktop 2
-
-- Effacer C:\Users\pvler\Documents\Tmp\DevDay2021
-- Cmd
-  - C:\Users\pvlerick\ (docker)
-  - C:\Users\pvlerick\Documents\Tmp\DevDay2021 (sln)
-
-## Desktop 3
-
-- Visual Studio 
+- Slides in full-screen: fn + F11
+- Start Visual Studio then close it (cold start)
+- Clean ILSpy
+- Clean tmp folder
+- Clear terminal

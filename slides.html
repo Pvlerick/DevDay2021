@@ -33,7 +33,7 @@
 
 						Note:
 						Qui utilise asyc/await quotidiennement?
-						Qui a déjà écit du code asynchrone sans async/await?
+						Qui a déjà écrit du code asynchrone sans async/await?
 					</textarea>
 				</section>
 				<section data-markdown>
@@ -52,25 +52,27 @@
 						- tente de palier à ces problèmes <!-- .element: class="fragment" -->
 						- permet du code plus familier <!-- .element: class="fragment" -->
 						- sont devenus omniprésents <!-- .element: class="fragment" -->
+						- alignement avec l'OS <!-- .element: class="fragment" -->
 
 						Note:
 						Async/await tente d'apporter une solution afin de permettre l'écriture de code exprimant une intention claire
 						ASP.NET Core => async partout
-						Tout dévelopeur C# est ammené à écrire await plusieurs fois par jour
+						Tout développeur  C# est amené à écrire await plusieurs fois par jour
+						https://blog.stephencleary.com/2013/11/there-is-no-thread.html
 					</textarea>
 				</section>
 				<section data-markdown>
 					<textarea data-template>
 						### Que va-t-on faire?
 						- Voir la théorie <!-- .element: class="fragment" -->
-						- Écrire un peu de code <!-- .element: class="fragment" -->
-						- Regarder sous le capot <!-- .element: class="fragment" -->
-						  - le code géneré par le compilateur <!-- .element: class="fragment" -->
+						- Écrire du code <!-- .element: class="fragment" -->
+						- Regarder le code généré par le compilateur <!-- .element: class="fragment" -->
 					</textarea>
 				</section>
 				<section data-markdown>
 					<textarea data-template>
 						### Pourquoi?
+						- Curiosité <!-- .element: class="fragment" -->
 						- Meilleur compréhension <!-- .element: class="fragment" -->
 					</textarea>
 				</section>
@@ -85,11 +87,11 @@
 						### Observations
 						- <!-- .element: class="fragment" --> pas de <code>callback</code> ou d'<code>event</code> 
 						- <!-- .element: class="fragment" --> structure de code familière 
-						  - <!-- .element: class="fragment" --> ressemble a du code bloquant
+						  - <!-- .element: class="fragment" --> ressemble à du code bloquant
 						  
 						Note:
 						Le code ressemble à du code bloquant, le seul gain est dans la performance
-						Du point de vue du dévelopeur, la méthode est en "pause" jusqu'a l'obtention du résultat
+						Du point de vue du développeur, la méthode est en "pause" jusqu'à l'obtention du résultat
 					</textarea>
 				</section>
 				<section data-markdown>
@@ -111,7 +113,7 @@
 					<textarea data-template>
 						### Observations
 						- <!-- .element: class="fragment" --> appel à <code>GetQuote</code> découplé de l'attente du résultat
-						- <!-- .element: class="fragment" --> <code>await</code> suspend l'execution du code en attendant la fin d'une opération
+						- <!-- .element: class="fragment" --> <code>await</code> suspend l'exécution du code en attendant la fin d'une opération
 						  - <!-- .element: class="fragment" --> sans bloquer le <code>thread</code>
 						  
 						Note:
@@ -122,16 +124,12 @@
 			<section>
 				<section data-markdown>
 					<textarea data-template>
-						## Evaluation de <code>await</code>
+						## Évaluation de <code>await</code>
 					</textarea>
 				</section>
 				<section data-markdown>
 					<textarea data-template>
 						<img src="img/await.png" width="300">
-	
-						Note:
-						L'execution sera synchrone tnat qu'il n'y a pas un réel besoin d'attendre
-						Retour à l'appelant != methode execution terminée!
 					</textarea data-template>
 				</section>
 				<section data-markdown>
@@ -146,7 +144,7 @@
 				<section data-markdown>
 					<textarea data-template>
 						## Le pattern <code>awaitable</code>
-						#### Codification d'une operation asynchrone
+						#### Codification d'une opération asynchrone
 					</textarea>
 				</section>
 				<section data-markdown>
@@ -160,7 +158,7 @@
 				<section data-markdown>
 					<textarea data-template>
 						### <code>TAwaiter</code>
-						Le être valable, il doit à son tour
+						Pour être valable, il doit à son tour
 						- <!-- .element: class="fragment" --> implémenter <code>INotifyCompletion</code>
 						  - <!-- .element: class="fragment" --> <code>void OnCompleted(Action continuation);</code>
 						- <!-- .element: class="fragment" --> avoir une propriété <code>bool IsCompleted</code>
@@ -226,11 +224,12 @@
 				</section>
 				<section data-markdown>
 					<textarea data-template>
-						- <!-- .element: class="fragment" --> une méthode <code>async</code> rencontre un <code>await</code>
-						  - <!-- .element: class="fragment" --> si l'opération est terminée: elle continue de manière synchrone
-						  - <!-- .element: class="fragment" --> si l'opération n'est pas finie:
-						    - <!-- .element: class="fragment" --> tout le code après est passé comme continuation
-							- <!-- .element: class="fragment" --> l'execution retourne à l'appelant
+						### Quand un <code>await</code> est rencontré
+						- <!-- .element: class="fragment" --> si l'opération est terminée:
+						  - <!-- .element: class="fragment" --> on continue de manière synchrone
+						- <!-- .element: class="fragment" --> si l'opération n'est pas terminée:
+						  - <!-- .element: class="fragment" --> tout le code après devient la continuation
+						  - <!-- .element: class="fragment" --> l'exécution remonte à l'appelant
 					</textarea>
 				</section>
 			</section>
@@ -238,7 +237,7 @@
 				<section data-markdown>
 					<textarea data-template>
 						## <code>IAsyncStateMachine</code>
-						#### Le coeur de la machinerie
+						#### Le cœur de la machinerie
 					</textarea>
 				</section>
 				<section data-markdown>
@@ -361,16 +360,30 @@
 				</section>
 				<section data-markdown>
 					<textarea data-template>
-						### Ce n'est pas si compliqué!
-						- <!-- .element: class="fragment" --> le code décompilé fait un peu mal aux yeux
-						- <!-- .element: class="fragment" --> mais il n'est pas complètement illisible
+						### <code>async/await</code> cache une grande complexité
+						- pour très peu de code source, beaucoup de code généré <!-- .element: class="fragment" -->
+						- machine à état pour conserver les variables et reprendre au bon endroit
 					</textarea>
 				</section>
 				<section data-markdown>
 					<textarea data-template>
 						### Les grands absents...
-						- <!-- .element: class="fragment" -->gestion des erreurs
-						- <!-- .element: class="fragment" --><code>SynchronizationContext</code>
+						- <!-- .element: class="fragment" --> gestion des erreurs
+						- <!-- .element: class="fragment" --> <code>SynchronizationContext</code>
+						- <!-- .element: class="fragment" --> <code>ValueTask</code>
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Vous voulez en savoir plus?
+						Décompilez pour voir comment votre code altère le contenu de <code>MoveNext()</code>!
+					</textarea>
+				</section>
+			</section>
+			<section>
+				<section data-markdown>
+					<textarea data-template>
+						## Questions?
 					</textarea>
 				</section>
 			</section>
